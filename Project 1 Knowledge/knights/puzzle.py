@@ -13,6 +13,11 @@ CKnave = Symbol("C is a Knave")
 # A says "I am both a knight and a knave."
 knowledge0 = And(
     # TODO
+
+    Biconditional(AKnight, And(AKnight,AKnave)),
+    Or(AKnight, AKnave),
+    Not(And(AKnight, AKnave))
+
 )
 
 # Puzzle 1
@@ -20,6 +25,14 @@ knowledge0 = And(
 # B says nothing.
 knowledge1 = And(
     # TODO
+
+    Biconditional(AKnight, And(AKnave,BKnave)),
+
+    Or(AKnight, AKnave),
+    Not(And(AKnight,AKnave)),
+    Or(BKnight, BKnave),
+    Not(And(BKnight, BKnave))
+
 )
 
 # Puzzle 2
@@ -27,6 +40,15 @@ knowledge1 = And(
 # B says "We are of different kinds."
 knowledge2 = And(
     # TODO
+
+    Biconditional(AKnight, Or(And(AKnight, BKnight), And(AKnave, BKnave))),
+    Biconditional(BKnight, Or(And(AKnight, BKnave), And(AKnave, BKnight))),
+
+    Or(AKnight, AKnave),
+    Not(And(AKnight,AKnave)),
+    Or(BKnight, BKnave),
+    Not(And(BKnight, BKnave))
+
 )
 
 # Puzzle 3
@@ -36,6 +58,19 @@ knowledge2 = And(
 # C says "A is a knight."
 knowledge3 = And(
     # TODO
+
+    Biconditional(AKnight, And(Or(AKnight, AKnave), Not(And(AKnight, AKnave)))),
+    Biconditional(BKnight, Biconditional(AKnight, AKnave)),
+    Biconditional(BKnight, CKnave),
+    Biconditional(CKnight, AKnight),
+
+    Or(AKnight, AKnave),
+    Not(And(AKnight,AKnave)),
+    Or(BKnight, BKnave),
+    Not(And(BKnight, BKnave)),
+    Or(CKnight, CKnave),
+    Not(And(CKnight,CKnave))
+
 )
 
 
@@ -47,6 +82,7 @@ def main():
         ("Puzzle 2", knowledge2),
         ("Puzzle 3", knowledge3)
     ]
+
     for puzzle, knowledge in puzzles:
         print(puzzle)
         if len(knowledge.conjuncts) == 0:
