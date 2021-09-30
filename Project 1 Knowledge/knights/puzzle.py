@@ -14,7 +14,10 @@ CKnave = Symbol("C is a Knave")
 knowledge0 = And(
     # TODO
 
+    # if A is knight then A's statement is right, vice versa
     Biconditional(AKnight, And(AKnight,AKnave)),
+
+    # A either knight or knave
     Or(AKnight, AKnave),
     Not(And(AKnight, AKnave))
 
@@ -26,10 +29,14 @@ knowledge0 = And(
 knowledge1 = And(
     # TODO
 
+    # if A is knight then A's statement is right, vice versa
     Biconditional(AKnight, And(AKnave,BKnave)),
 
+    # A either knight or knave
     Or(AKnight, AKnave),
     Not(And(AKnight,AKnave)),
+    
+    # B either knight or knave
     Or(BKnight, BKnave),
     Not(And(BKnight, BKnave))
 
@@ -40,7 +47,7 @@ knowledge1 = And(
 # B says "We are of different kinds."
 knowledge2 = And(
     # TODO
-
+    
     Biconditional(AKnight, Or(And(AKnight, BKnight), And(AKnave, BKnave))),
     Biconditional(BKnight, Or(And(AKnight, BKnave), And(AKnave, BKnight))),
 
