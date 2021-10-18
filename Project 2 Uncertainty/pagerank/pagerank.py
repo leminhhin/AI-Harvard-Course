@@ -57,7 +57,17 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    # initialize distribution
+    prob_distribution = {p:0 for p in corpus}
+    # all pages have the same (1-d) probability
+    for p in prob_distribution:
+        prob_distribution[p] += (1-damping_factor)/len(corpus)
+    linked_pages = corpus[page]
+    # update prob for pages linked by current page
+    for p in linked_pages:
+        num_links = len(corpus) if len(linked_pages) == 0 else len(linked_pages)
+        prob_distribution[p] += damping_factor/num_links
+    return prob_distribution
 
 
 def sample_pagerank(corpus, damping_factor, n):
@@ -69,8 +79,39 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    # create initial sample
+    current_page = random.choice(list(corpus.keys()))
+    PR_chain = [current_page]
+    
+    # Loop for n-1 remaining samples
+    for i in range(n-1):
+        distribution = transition_model(corpus,current_page,damping_factor)
+        # pick a page randomly based on their weight
+        current_page = random.choices(population=list(distribution.keys()),weights=list(distribution.values()),k=1).pop()
+        # add chosen page to the chain
+        PR_chain.append(current_page)
+    
+    # normalize results
+    page_ranks = {page : PR_chain.count(page)/n for page in corpus}
+    
+    print(sum(page_ranks.values()))
+    return page_ranks
 
+def get_incoming_pages(corpus, current_page):
+    """
+    Return list of pages in corpus that link to current_page.
+    """
+    return [page for page in corpus if current_page in corpus[page]]
+
+def calculate_i_sum_part(corpus, page_ranks, incoming_pages):
+    """
+    Return i sum part in formula.
+    """
+    result = 0
+    for page in incoming_pages:
+        num_links = len(corpus) if len(corpus[page]) == 0 else len(corpus[page])
+        result += page_ranks[page] / num_links
+    return result
 
 def iterate_pagerank(corpus, damping_factor):
     """
@@ -81,7 +122,31 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    # STOPPING_CONDITION used to compare current changes with new changes
+    STOPPING_CONDITION = 0.001
+    # flag cont to check if STOPPING_CONDITION is satisfied
+    cont = True
+    # initialize page_ranks
+    INITIAL_POS = 1 / len(corpus)
+    page_ranks = {page : INITIAL_POS for page in corpus}
+    # loop until STOPPING_CONDITION is satisfied
+    while cont:
+        prev_PR = page_ranks.copy()
+        cont = False
+        for page in page_ranks:
+            # get incoming pages
+            incoming = get_incoming_pages(corpus, page)
+            # calculate PR(p) using given formula
+            i_sum_part = calculate_i_sum_part(corpus, prev_PR, incoming)
+            page_ranks[page] = (1-damping_factor)/len(corpus) + i_sum_part * damping_factor
+            # check STOPPING_CONDITION
+            if abs(page_ranks[page] - prev_PR[page]) > STOPPING_CONDITION:
+                cont = True
+    sum_pos = sum(page_ranks.values())
+    # normalize results
+    page_ranks = {page : pos/sum_pos for page,pos in page_ranks.items()}
+    print(sum(page_ranks.values()))
+    return page_ranks
 
 
 if __name__ == "__main__":
