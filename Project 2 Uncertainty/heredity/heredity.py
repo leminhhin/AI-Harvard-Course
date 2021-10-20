@@ -126,7 +126,55 @@ def powerset(s):
             itertools.combinations(s, r) for r in range(len(s) + 1)
         )
     ]
+def isParent(person):
+    return person['mother'] is None and person['father'] is None
 
+def calcTrait(num_genes, trait):
+    """
+    Return the probability of having "trait" giving the number of genes.
+    """
+    return PROBS["gene"][num_genes] * PROBS["trait"][trait]
+
+def calcChild(genes):
+    # 0:
+    #   00: (khong nhan me)(khong nhan ba)
+    #   01: 
+    #   02: (nhan tu me + dot bien)(khong nhan tu ba + dot bien) + (khong nhan me - dot bien)(nhan ba - dot bien)
+    #   10:
+    #   11:
+    #   12:
+    #   20:
+    #   21:
+    #   22:
+    # 1:
+    #   00: (khong nhan tu me)
+    #   01: 
+    #   02: (nhan tu me + dot bien)(khong nhan tu ba + dot bien) + (khong nhan me - dot bien)(nhan ba - dot bien)
+    #   10:
+    #   11:
+    #   12:
+    #   20:
+    #   21:
+    #   22:
+    # 2:
+    #   00: (khong nhan tu me)
+    #   01: 
+    #   02: (nhan tu me + dot bien)(khong nhan tu ba + dot bien) + (khong nhan me - dot bien)(nhan ba - dot bien)
+    #   10:
+    #   11:
+    #   12:
+    #   20:
+    #   21:
+    #   22:
+    ...
+def track_genes(people,one_gene,two_genes):
+    genes = {person : 0 for person in people}
+    for person in people:
+        if person in one_gene:
+            genes[person] = 1
+        elif person in two_genes:
+            genes[person] = 2
+    return genes
 
 def joint_probability(people, one_gene, two_genes, have_trait):
     """
@@ -139,6 +187,40 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
+    prob = {person:1 for person in people}
+    genes = track_genes(people, one_gene, two_genes)
+    for person in people:
+        # track number of genes for each person
+        # probability for parents
+        if isParent(person):
+            if person in one_gene:
+                if person in have_trait:
+                    prob[person] *= calcTrait(num_genes=1, have_trait=True)
+                else:
+                    prob[person] *= calcTrait(num_genes=1, have_trait=False)
+            elif person in two_genes:
+                if person in have_trait:
+                    prob[person] *= calcTrait(num_genes=2, have_trait=True)
+                else:
+                    prob[person] *= calcTrait(num_genes=2, have_trait=False)
+            else:
+                if person in have_trait:
+                    prob[person] *= calcTrait(num_genes=0, have_trait=True)
+                else:
+                    prob[person] *= calcTrait(num_genes=0, have_trait=False)
+        # probability for child
+        else:
+            # receive gene from mother but not father
+            # 0: 0.00 + 0.01 (mutation) => 0.99 not
+            # 1: 0.51 => 0.49 not
+            # 2: 1 - 0.01 (mutation) => 0.01 not
+            if person in one_gene:
+                ...
+            elif person in two_genes:
+                ...
+            else:
+                ...
+
     raise NotImplementedError
 
 
