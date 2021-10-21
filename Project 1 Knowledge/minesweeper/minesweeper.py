@@ -1,6 +1,5 @@
 import itertools
 import random
-from types import NoneType
 
 
 class Minesweeper():
@@ -170,7 +169,6 @@ class MinesweeperAI():
         self.mines.add(cell)
         for sentence in self.knowledge:
             sentence.mark_mine(cell)
-        return None
 
     def mark_safe(self, cell):
         """
@@ -180,9 +178,11 @@ class MinesweeperAI():
         self.safes.add(cell)
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
-        return None
 
     def get_neighbors(self, cell, count):
+        """
+        Return neighbors set and number of nearby mines
+        """
         neighbors = set()
 
         # Loop over all cells within one row and column
@@ -200,7 +200,6 @@ class MinesweeperAI():
                     if (i,j) in self.mines:
                         count -= 1
         return neighbors, count
-    
 
     def add_knowledge(self, cell, count):
         """
@@ -290,7 +289,6 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-
         safes = self.safes - self.moves_made
         if safes:
             return safes.pop()
