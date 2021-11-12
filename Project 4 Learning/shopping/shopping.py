@@ -1,8 +1,9 @@
 import csv
 import sys
-
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix
 
 TEST_SIZE = 0.4
 
@@ -59,7 +60,39 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    with open(filename) as file:
+        evidence = list(csv.reader(file))[1:]
+        labels = []
+
+        for row in evidence:
+            for col in range(len(row)):
+                if col in (0,2,4,11,12,13,14):
+                    row[col] = int(row[col])
+                elif col in (1,3,5,6,7,8,9):
+                    row[col] = float(row[col])
+                elif col == 10:
+                    row[col] = {'Jan': 0,
+                                'Feb': 1,
+                                'Mar': 2,
+                                'Apr': 3,
+                                'May': 4,
+                                'June': 5,
+                                'Jul': 6,
+                                'Aug': 7,
+                                'Sep': 8,
+                                'Oct': 9,
+                                'Nov': 10,
+                                'Dec': 11}[row[col]]
+                elif col == 15:
+                    row[col] = 1 if row[col] == 'Returning_Visitor' else 0
+                else:
+                    row[col] = 1 if row[col] == 'TRUE' else 0
+
+        for i in range(len(evidence)):
+            labels.append(evidence[i].pop())
+
+    return (evidence, labels)
+    # raise NotImplementedError
 
 
 def train_model(evidence, labels):
@@ -67,7 +100,10 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    model = KNeighborsClassifier(n_neighbors=1)
+    model.fit(evidence, labels)
+    return model
+    # raise NotImplementedError
 
 
 def evaluate(labels, predictions):
@@ -85,7 +121,16 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    labels = np.array(labels)
+
+    tn, fp, fn, tp = confusion_matrix(labels, predictions).ravel()
+
+    sensitivity = tp / (tp + fp)
+    specificity = tn / (tn + fn)
+
+    return (sensitivity, specificity)
+
+    # raise NotImplementedError
 
 
 if __name__ == "__main__":
