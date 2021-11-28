@@ -3,3 +3,4 @@ Project 1 Knowledge/.DS_Store
 Project 0 Search/.DS_Store
 Project 1 Knowledge/minesweeper/__pycache__/minesweeper.cpython-310.pyc
 .DS_Store
+*.ppm
