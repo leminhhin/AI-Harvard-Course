@@ -1,0 +1,72 @@
+# Search
+
+---
+
+## Uninformed search
+
+Không sử dụng thông tin cho trước		
+
+**DFS**: Sử dụng stack (last in first out)
+
+**BFS**: Sử dụng queue (first in first out)
+
+-> có thể không tìm được optimal solution
+
+---
+
+## Informed search
+
+### Greedy Best First search 
+
+Sử dụng hàm heuristic h(n): tính cost từ state hiện tại đến goal
+
+VD: trong maze thì dùng Manhattan distance
+
+### A* search
+
+Sử dụng hàm heuristic g(n) + h(n)
+
+​	g(n): cost để đến được node đó
+
+​	h(n): cost đến goal
+
+Sẽ optimal nếu:
+
+-   ​	h(n) không overestimate cái true cost
+
+-   ​	h(n) ổn định: với mọi n và n' (successor), với step cost là c thì h(n) <= h(n') + c
+
+---
+
+## Adversarial search
+
+Có 2 agent:
+
+​	Agent tìm solution
+
+​	Agent cố gắng sabotage việc tìm solution
+
+VD: tic tac toe
+
+### Thuật toán minimax
+
+3 outcomes: -1 0 1 (lose draw win)
+
+Agent max wants to maximize score.
+
+Agent min wants to minimize score.
+
+Đệ quy:
+
+​	Khi đủ điều kiện dừng thì dừng
+
+​	Nếu không thì MAX sẽ chọn ra gia trị lớn nhất trong những possible result after MIN takes action.
+
+​	MIN thì ngược lại
+
+-> Phải xét qua toàn bô possible actions -> không hiệu quả
+
+Có thể cải tiến bằng:
+
+-   Alpha - beta pruning: keep track lại max và min có thể đạt được, bỏ đi những nhánh cây không cần thiết phải xét tới
+-   Deep-limited minimax: giống như chess engine, chỉ xét đến 1 mức độ deep nào đó thôi, và cần phải có 1 evaluation function để đánh giá tình trạng score value. Evaluation càng tốt thì AI càng tốt
